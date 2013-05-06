@@ -1,0 +1,36 @@
+STEP 1 :
+create view history_extended as (
+  select
+    history.*,
+    case when itemname = "A" then itemvalue end as A,
+    case when itemname = "B" then itemvalue end as B,
+    case when itemname = "C" then itemvalue end as C
+  from history
+);
+
+select * from history_extended;
+
+----------------------
+
+STEP 2 :
+create view history_itemvalue_pivot as (
+  select
+    hostid,
+    sum(A) as A,
+    sum(B) as B,
+    sum(C) as C
+  from history_extended
+  group by hostid
+);
+
+-----------------------
+
+STEP 3:
+create view history_itemvalue_pivot_pretty as (
+  select 
+    hostid, 
+    coalesce(A, 0) as A, 
+    coalesce(B, 0) as B, 
+    coalesce(C, 0) as C 
+  from history_itemvalue_pivot 
+);

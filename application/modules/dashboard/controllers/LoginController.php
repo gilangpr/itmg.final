@@ -9,7 +9,7 @@ class Dashboard_LoginController extends Zend_Controller_Action
 	{
 		$layout = $this->_helper->layout();
 		$layout->setLayout('login');
-		$this->_isLdap = true;
+		$this->_isLdap = false;
 		$this->_model = new Application_Model_LoginLog();
 	}
 	

@@ -144,6 +144,7 @@ class Sharepricesname_RequestController extends MyIndo_Controller_Action
 
 				$q = $this->_model2->select()
 				->where('TEXT = ?', $this->_posts['SHAREPRICES_NAME']);
+
 				$c = $q->query()->fetchAll();
 
 				if(count($c) == 0) {

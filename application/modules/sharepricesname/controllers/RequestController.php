@@ -36,7 +36,7 @@ class Sharepricesname_RequestController extends MyIndo_Controller_Action
 		);
 	}
 	
-public function readAction()
+	public function readAction()
 	{
 		if($this->isPost() && $this->isAjax()) {
 			if(isset($this->_posts['sort']) || isset($this->_posts['query'])) {
@@ -110,41 +110,56 @@ public function readAction()
 				'data' => array()
 		);
 		
-		if ($this->_model->isExistByKey('SHAREPRICES_NAME', $this->_posts['SHAREPRICES_NAME']))
-		{
+		$q = $this->_model->select()
+		->where('SHAREPRICES_NAME = ?', $this->_posts['SHAREPRICES_NAME']);
+		$c = $q->query()->fetchAll();
+
+		if (count($c) > 0) {
 			
 			$this->_success = false;
 			$this->_error_message = 'Shareprices name already exist';
-		}
-		else 
-		{
+
+		} else {
+
 			try {
-				$this->_model3->insert(array(
-						'MODEL_ID' => 6,
-						'NAME' => $this->_posts['SHAREPRICES_NAME'],
-						'TYPE' => 'float',
-						'CREATED_DATE' => date('Y-m-d H:i:s')
-				));
-				$id = $this->_model3->getPkByKey('NAME', $this->_posts['SHAREPRICES_NAME']);
+				$q = $this->_model3->select()
+				->where('NAME = ?', $this->_posts['SHAREPRICES_NAME']);
+				$c = $q->query()->fetchAll();
+				if(count($c) == 0) {
+					$this->_model3->insert(array(
+							'MODEL_ID' => 6,
+							'NAME' => $this->_posts['SHAREPRICES_NAME'],
+							'TYPE' => 'float',
+							'CREATED_DATE' => date('Y-m-d H:i:s')
+					));
+				}
+
 				// Insert Data :
 				$getSNid = $this->_model->insert(array(
-						'SHAREPRICES_NAME_ID'=> $id,
 						'SHAREPRICES_NAME'=> $this->_posts['SHAREPRICES_NAME'],
 						'CREATED_DATE' => date('Y-m-d H:i:s')
 				));
-				$this->_model2->insert(array(
-						'CONTENT_COLUMN_ID' => $id,
-						'CONTENT_ID' => 6,
-						'TEXT' => $this->_posts['SHAREPRICES_NAME'],
-						'DATAINDEX' => $this->_posts['SHAREPRICES_NAME'],
-						'DATATYPE' => 'float',
-						'ALIGN' => 'center',
-						'WIDTH' => '100',
-						'EDITABLE' => 1,
-						'FLEX' => 1,
-						'INDEX' => 0,
-						'CREATED_DATE' => date('Y-m-d H:i:s')
-				));
+
+				/* Content Columns */
+
+				$q = $this->_model2->select()
+				->where('TEXT = ?', $this->_posts['SHAREPRICES_NAME']);
+				$c = $q->query()->fetchAll();
+
+				if(count($c) == 0) {
+					$this->_model2->insert(array(
+							'CONTENT_ID' => 6,
+							'TEXT' => $this->_posts['SHAREPRICES_NAME'],
+							'DATAINDEX' => $this->_posts['SHAREPRICES_NAME'],
+							'DATATYPE' => 'float',
+							'ALIGN' => 'center',
+							'WIDTH' => '100',
+							'EDITABLE' => 1,
+							'FLEX' => 1,
+							'INDEX' => 0,
+							'CREATED_DATE' => date('Y-m-d H:i:s')
+					));
+				}
 
 				/* Set Value */
 				$_qSp = $this->_modelSp->select()
@@ -152,22 +167,31 @@ public function readAction()
 				->distinct(true);
 				$_result = $_qSp->query()->fetchAll();
 				foreach($_result as $k=>$d) {
-					$this->_modelSp->insert(array(
-						'DATE'=> $d['DATE'],
-						'SHAREPRICES_NAME' => $this->_posts['SHAREPRICES_NAME'],
-						'VALUE' => 0,
-						'CREATED_DATE' => date('Y-m-d H:i:s'),
-						'SHAREPRICES_NAME_ID' => $getSNid
-						));
-					//insert shareprices log
-					$this->_modelLog->insert(array(
+
+					$q = $this->_modelSp->select()
+					->where('SHAREPRICES_NAME = ?', $this->_posts['SHAREPRICES_NAME']);
+					$c = $q->query()->fetchAll();
+
+					if(count($c) > 0) {
+
+						$this->_modelSp->insert(array(
 							'DATE'=> $d['DATE'],
 							'SHAREPRICES_NAME' => $this->_posts['SHAREPRICES_NAME'],
-							'VALUE_BEFORE' => 0,
-							'VALUE_AFTER' => 0,
+							'VALUE' => 0,
 							'CREATED_DATE' => date('Y-m-d H:i:s'),
 							'SHAREPRICES_NAME_ID' => $getSNid
-					));
+							));
+						//insert shareprices log
+						$this->_modelLog->insert(array(
+								'DATE'=> $d['DATE'],
+								'SHAREPRICES_NAME' => $this->_posts['SHAREPRICES_NAME'],
+								'VALUE_BEFORE' => 0,
+								'VALUE_AFTER' => 0,
+								'CREATED_DATE' => date('Y-m-d H:i:s'),
+								'SHAREPRICES_NAME_ID' => $getSNid
+						));
+
+					}
 				}
 				
 			}catch(Exception $e) {
@@ -246,11 +270,13 @@ public function readAction()
 		);
 		try {
 			$_q = $this->_modelSp->select()
-			->from('SHAREPRICES', array('sum(value) as total'))
 			->where('SHAREPRICES_NAME = ?', $this->_posts['SHAREPRICES_NAME']);
-			$_x = $_q->query()->fetch();
-				//->where('SHAREPRICES_NAME = ?', $this->_posts['SHAREPRICES_NAME']);
-			if(isset($_x['total']) && $_x['total'] == 0) {
+			$_x = $_q->query()->fetchAll();
+			$total = 0;
+			foreach($_x as $k=>$d) {
+				$total += $d['VALUE'];
+			}
+			if($total == 0) {
 				// Delete
 				$this->_modelSp->delete(
 						$this->_modelSp->getAdapter()->quoteInto('SHAREPRICES_NAME = ?', $this->_posts['SHAREPRICES_NAME']));

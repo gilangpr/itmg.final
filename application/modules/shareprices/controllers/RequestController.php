@@ -92,7 +92,7 @@ class Shareprices_RequestController extends MyIndo_Controller_Action
 			}
 			$this->_data['data']['items'][$_i]['IDS'] .= $d['SHAREPRICES_NAME'] . '_' . $d['SHAREPRICES_ID'];
 		}
-		$this->_data['data']['totalCount'] = $this->_model->count() / count($spRes);
+		$this->_data['data']['totalCount'] = (count($spRes) > 0) ? ($this->_model->count() / count($spRes)) : 0;
 		MyIndo_Tools_Return::JSON($this->_data, $this->_error_code, $this->_error_message, $this->_success);
 	}
 	

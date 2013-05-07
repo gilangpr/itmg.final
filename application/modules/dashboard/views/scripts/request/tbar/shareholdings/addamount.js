@@ -7,6 +7,14 @@ if(selected.length > 0) {
 if(!c.up().items.get(id)) {
 	var data = selected[0].data;
 };
+	Ext.define('Shareholding', {
+		extend: 'Ext.data.Model',
+		fields: [{
+			name: 'SHAREHOLDING_ID',
+			type: 'string'
+		}]
+	});
+	
 	var store = Ext.create("Ext.data.Store", {
 		model: "ShareholdingAmount",
 		storeId: "ShareholdingAmounts",

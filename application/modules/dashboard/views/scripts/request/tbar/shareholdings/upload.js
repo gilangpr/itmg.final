@@ -1,3 +1,10 @@
+	Ext.define('Shareholding', {
+		extend: 'Ext.data.Model',
+		fields: [{
+			name: 'SHAREHOLDING_ID',
+			type: 'string'
+		}]
+	});
 Ext.create('Ext.Window', {
 	title: 'Upload Excel',
 	width: 400,

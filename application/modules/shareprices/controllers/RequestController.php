@@ -137,8 +137,8 @@ class Shareprices_RequestController extends MyIndo_Controller_Action
 							$q = $this->_model->select()
 							->where('DATE = ?', $date)
 							->where('SHAREPRICES_NAME = ?', $d['SHAREPRICES_NAME']);
-							
-							if($q->query()->rowCount() == 0) {
+							$_x = $q->query()->fetchAll();
+							if(count($_x) == 0) {
 
 								$_gSid = $spName->getPkByKey('SHAREPRICES_NAME', $d['SHAREPRICES_NAME']);
 
@@ -204,8 +204,8 @@ class Shareprices_RequestController extends MyIndo_Controller_Action
 							$q = $this->_model->select()
 							->where('DATE = ?', $date)
 							->where('SHAREPRICES_NAME = ?', $d['SHAREPRICES_NAME']);
-							
-							if($q->query()->rowCount() == 0) {
+							$_x = $q->query()->fetchAll();
+							if(count($_x) == 0) {
 								$_gSid = $spName->getPkByKey('SHAREPRICES_NAME', $d['SHAREPRICES_NAME']);
 								$this->_model->insert(array(
 									'DATE'=> $this->_posts['DATE'],
@@ -464,8 +464,8 @@ class Shareprices_RequestController extends MyIndo_Controller_Action
 								$q = $this->_model->select()
 								->where('DATE = ?', $_d['DATE'])
 								->where('SHAREPRICES_NAME = ?', $d['SHAREPRICES_NAME']);
-								
-								if($q->query()->rowCount() == 0) {
+								$_x = $q->query()->fetchAll();
+								if(count($_x) == 0) {
 
 									$_gSid = $spName->getPkByKey('SHAREPRICES_NAME', $d['SHAREPRICES_NAME']);
 

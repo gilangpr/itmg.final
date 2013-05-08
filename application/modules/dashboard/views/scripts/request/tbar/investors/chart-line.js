@@ -104,27 +104,33 @@
 												click: function() {
 													var form = Ext.getCmp('investors-detail-portfolio-distributions-add-new-form-' + data.INVESTOR_ID);
 													if(form.getForm().isValid()) {
-														form.getForm().submit({
-															url: sd.baseUrl + '/portfoliodistribution/request/create/id/' + data.INVESTOR_ID,
-															waitMsg: 'Saving data, please wait..',
-															params: {
-																id: data.INVESTOR_ID
-															},
-															success: function(d, e) {
-																var json = Ext.decode(e.response.responseText);
-																Ext.Msg.alert('Message', 'Savind data success.');
-																storePD.load({
+														Ext.MessageBox.confirm('Confirmation', 'Are you sure want to save this data ?', function(btn) {
+															if(btn == 'yes') {
+																form.getForm().submit({
+																	url: sd.baseUrl + '/portfoliodistribution/request/create/id/' + data.INVESTOR_ID,
+																	waitMsg: 'Saving data, please wait..',
 																	params: {
 																		id: data.INVESTOR_ID
+																	},
+																	success: function(d, e) {
+																		var json = Ext.decode(e.response.responseText);
+																		Ext.Msg.alert('Message', 'Saving data success.');
+																		storePD.load({
+																			params: {
+																				id: data.INVESTOR_ID
+																			}
+																		});
+																		form.getForm().reset();
+																	},
+																	failure: function(d, e) {
+																		var json = Ext.decode(e.response.responseText);
+																		Ext.Msg.alert('Error', '[' + json.error_code + '] : ' + json.error_message);
 																	}
 																});
-																form.getForm().reset();
-															},
-															failure: function(d, e) {
-																var json = Ext.decode(e.response.responseText);
-																Ext.Msg.alert('Error', json.error_message);
 															}
-														})
+														});
+													} else {
+														Ext.Msg.alert('Error', manr);
 													}
 												}
 											}
@@ -149,56 +155,34 @@
 									var __selected = __c.getSelectionModel().getSelection();
 									if(__selected.length > 0) {
 										var __data = __selected[0].data;
-										Ext.create('Ext.Window', {
-											html: 'Are you sure want do delete selected item(s) ?',
-											bodyPadding: '20 5 5 17',
-											title: 'Confirmation',
-											resizable: false,
-											modal: true,
-											closable: false,
-											draggable: false,
-											width: 300,
-											height: 120,
-											buttons: [{
-												text: 'Yes',
-												listeners: {
-													click: function() {
-														showLoadingWindow();
-														this.up().up().close();
-														Ext.Ajax.request({
-															url: sd.baseUrl + '/portfoliodistribution/request/destroy',
+										Ext.MessageBox.confirm('Delete Confirmation', 'Are you sure want to delete selected data(s) ?', function(btn) {
+											if(btn == 'yes') {
+												showLoadingWindow();
+												Ext.Ajax.request({
+													url: sd.baseUrl + '/portfoliodistribution/request/destroy',
+													params: {
+														PORTFOLIO_DISTRIBUTION_ID: __data.PORTFOLIO_DISTRIBUTION_ID,
+														INVESTOR_ID:data.INVESTOR_ID
+													},
+													success: function(d) {
+														var json = Ext.decode(d.responseText); // Decode responsetext | Json to Javasript Object
+														closeLoadingWindow();
+														storePD.load({
 															params: {
-																PORTFOLIO_DISTRIBUTION_ID: __data.PORTFOLIO_DISTRIBUTION_ID,
-																INVESTOR_ID:data.INVESTOR_ID
-															},
-															success: function(d) {
-																var json = Ext.decode(d.responseText); // Decode responsetext | Json to Javasript Object
-																closeLoadingWindow();
-																storePD.load({
-																	params: {
-																		id: data.INVESTOR_ID
-																	}
-																});
-															},
-															failure: function(d) {
-																var json = Ext.decode(d.responseText); // Decode responsetext | Json to Javasript Object
-																closeLoadingWindow();
-																Ext.Msg.alert('Error', json.error_message);
+																id: data.INVESTOR_ID
 															}
 														});
+													},
+													failure: function(d) {
+														var json = Ext.decode(d.responseText); // Decode responsetext | Json to Javasript Object
+														closeLoadingWindow();
+														Ext.Msg.alert('Error', '[' + json.error_code + '] : ' + json.error_message);
 													}
-												}
-											},{
-												text: 'No',
-												listeners: {
-													click: function() {
-														this.up().up().close();
-													}
-												}
-											}]
-										}).show();
+												});
+											}
+										});
 									} else {
-										Ext.Msg.alert('Message', 'You did not select any data.');
+										Ext.Msg.alert('Message', 'You did not select any data(s).');
 									}
 								}
 							}

@@ -118,8 +118,7 @@ class Application_Model_ShareholdingAmounts extends MyIndo_Ext_Abstract
 		$select = $this->select();
 		$select->from('SHAREHOLDING_AMOUNTS',array('*'));
 		$select->where('SHAREHOLDING_ID');
-		$select->where('DATE = ?', $maxDate);	
-		$select->group('SHAREHOLDING_ID');
+		$select->where('DATE = ?', $maxDate);
 		return $select->query()->fetchAll();
 	}
 	

@@ -115,35 +115,26 @@ function showShareholdingSearch() {
 											autoScroll: true,
 											store: _storeShareholdings,
 											columns: [{
-												text: 'Date',
-												dataIndex: 'DATE',
-												width: 120,
-												align: 'center'
-											},{
 												text: 'Investor Name',
 												dataIndex: 'INVESTOR_NAME',
 												flex: 1
-											},
-//											{
-//												text: 'Investor Status',
-//												width: 190,
-//												dataIndex: 'INVESTOR_STATUS'
-//											},
-											{
+											},{
+												text: 'Investor Status',
+												width: 190,
+												dataIndex: 'INVESTOR_STATUS'
+											},{
 												text: 'Account Holder',
 												width: 290,
 												dataIndex: 'ACCOUNT_HOLDER'
 											},{
-												text: 'No.Of Share',
+												text: 'Total',
 												width: 120,
 												dataIndex: 'AMOUNT',
-												renderer: Ext.util.Format.numberRenderer('0.,/i'),
-												align: 'center'
+												renderer: Ext.util.Format.numberRenderer('0.,/i')
 											},{
-												text: 'Percentage<br/>(%)',
+												text: 'Percentage',
 												width: 120,
 												dataIndex: 'PERCENTAGE',
-												renderer: Ext.util.Format.numberRenderer('0.00,/i'),
 												align: 'center'
 											}]
 										}]

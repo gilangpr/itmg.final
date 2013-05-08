@@ -135,7 +135,7 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 	
 	public function readAction()
 	{
-		
+		$data = array();
 		if(!isset($this->_posts['sort'])) {
 		$modelSA = new Application_Model_ShareholdingAmounts();
 		$sort = Zend_Json::decode($this->_posts['sort']);
@@ -175,16 +175,17 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 		$c = count($list);
 
 		 	$data = array(
-		 			'data' => array(
-		 					'items' => $list,
-		 					'Total' => count($list),
-		 					'totalCount' => $this->_model->count(),
-		 			));
+	 			'data' => array(
+ 					'items' => $list,
+ 					'Total' => count($list),
+ 					'totalCount' => $this->_model->count()
+	 			));
 		 	
 		 }  else {
 				try {
 					$modelSA = new Application_Model_ShareholdingAmounts();
 					$sort = Zend_Json::decode($this->_posts['sort']);
+					
 					$maxDate = $modelSA->getMaxdate();
 					/* Start Count Total Data */
 					$y = $this->_model->select()
@@ -214,7 +215,33 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 						$q->order('SHAREHOLDINGS.' . $sort[0]['property'] . ' ' .$sort[0]['direction']);
 					}
 
+					// $select = $this->_model->select();
+					// $select->setIntegrityCheck(false);
+					// $select->from('SHAREHOLDINGS', array('*'));
+					// $select->join('INVESTOR_STATUS', 'INVESTOR_STATUS.INVESTOR_STATUS_ID = SHAREHOLDINGS.INVESTOR_STATUS_ID', array('INVESTOR_STATUS'));
+					// $select->join('SHAREHOLDING_AMOUNTS', 'SHAREHOLDING_AMOUNTS.SHAREHOLDING_ID = SHAREHOLDINGS.SHAREHOLDING_ID', array('AMOUNT'));
+					// //$select->group('SHAREHOLDINGS.SHAREHOLDING_ID');
+					
+
+					
+//					$q = $this->_model->select()
+//					->setIntegrityCheck(false)
+					//->from('SHAREHOLDINGS', array());
+//					->join('INVESTOR_STATUS', 'INVESTOR_STATUS.INVESTOR_STATUS_ID = SHAREHOLDINGS.INVESTOR_STATUS_ID', array('INVESTOR_STATUS'))
+//					->join('SHAREHOLDING_AMOUNTS', 'SHAREHOLDING_AMOUNTS.SHAREHOLDING_ID = SHAREHOLDINGS.SHAREHOLDING_ID', array('AMOUNT'))
+//					->group('SHAREHOLDING_ID');
+				//	->limit($this->_limit, $this->_start);
+					
+					// if($sort[0]['property'] == 'INVESTOR_STATUS') {
+					// 	$q->order('INVESTOR_STATUS.' . $sort[0]['property'] . ' ' . $sort[0]['direction']);
+					// } else if($sort[0]['property'] == 'AMOUNT') {
+					// 	$q->order('SHAREHOLDING_AMOUNTS.' . $sort[0]['property'] . ' ' . $sort[0]['direction']);
+					// } else {
+					// 	$q->order('SHAREHOLDINGS.' . $sort[0]['property'] . ' ' .$sort[0]['direction']);
+					// }
+					
 					$lastId = $this->_model->getLastId();
+
 					$data = $modelSA->getTotal($maxDate);
 					$jml = 0;
 					foreach ($data as $k => $e) {			 
@@ -225,7 +252,6 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 							$jml += $amountid['AMOUNT'];
 						}
 					}
-
 					$c = $q->query()->fetchAll();
 					foreach($c as $k=>$d) {
 						$c[$k]['AMOUNT'] = $modelSA->getAmount($d['SHAREHOLDING_ID'],$maxDate);
@@ -251,12 +277,13 @@ class Shareholdings_RequestController extends Zend_Controller_Action
 		            				'Total' => count($c),
 		            				'totalCount' => count($z),
 		            		));
-		            
 				}catch(Exception $e) {
-					echo $e->getMessage();
+					$this->_error_code = $e->getCode();
+					$this->_error_message = $e->getMessage();
+					$this->_success = false;
 				}
-		MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 		 }
+		 MyIndo_Tools_Return::JSON($data, $this->_error_code, $this->_error_message, $this->_success);
 	}
 	
 	public function destroyAction()

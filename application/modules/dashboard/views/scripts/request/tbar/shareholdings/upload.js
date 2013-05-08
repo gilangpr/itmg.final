@@ -1,10 +1,3 @@
-	Ext.define('Shareholding', {
-		extend: 'Ext.data.Model',
-		fields: [{
-			name: 'SHAREHOLDING_ID',
-			type: 'string'
-		}]
-	});
 Ext.create('Ext.Window', {
 	title: 'Upload Excel',
 	width: 400,
@@ -28,8 +21,6 @@ Ext.create('Ext.Window', {
 							Ext.Msg.alert('Message','Success');
 							var store = loadStore('Shareholdings');
 							store.loadPage(1);
-							var store = Ext.StoreManager.lookup('InvestorStatuss');
-							store.load(1);
 						},
 						failure: function(data,e) {
 							var json = Ext.decode(e.response.responseText);

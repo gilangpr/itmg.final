@@ -7,14 +7,6 @@ if(selected.length > 0) {
 if(!c.up().items.get(id)) {
 	var data = selected[0].data;
 };
-	Ext.define('Shareholding', {
-		extend: 'Ext.data.Model',
-		fields: [{
-			name: 'SHAREHOLDING_ID',
-			type: 'string'
-		}]
-	});
-	
 	var store = Ext.create("Ext.data.Store", {
 		model: "ShareholdingAmount",
 		storeId: "ShareholdingAmounts",
@@ -48,8 +40,7 @@ if(!c.up().items.get(id)) {
 	
 	store.load({
 		params: {
-			id: data.SHAREHOLDING_ID /* single param */
-		}
+			id: data.SHAREHOLDING_ID
 	});
 	store.autoSync = true;
     Ext.create('Ext.Window', {
@@ -77,8 +68,6 @@ if(!c.up().items.get(id)) {
 							Ext.Msg.alert('Message','Success adding Amount');
 							var store = loadStore('Shareholdings');
 							store.loadPage(1);
-//							var store = Ext.StoreManager.lookup('Shareholdings');
-//							store.load(1);
 						},
 						failure: function(data) {
 							var json = Ext.decode(data.responseText);

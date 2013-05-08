@@ -672,7 +672,7 @@ if(!c.up().items.get(xid)) {
 										inputValue: 'Male',
 										fieldLabel: 'Sex',
 										boxLabel: 'Male',
-										//checked: true
+										checked: true
                             		},{
 									 	xtype: 'radiofield',
 									 	name: 'SEX',
@@ -695,22 +695,28 @@ if(!c.up().items.get(xid)) {
                                             var store = loadStore ('Contacts');
                                             
                                             if (form.isValid()) {
-                                                form.submit({
-                                                    url: sd.baseUrl + '/contacts/request/create/id/' + data.INVESTOR_ID,
-                                                    waitMsg: 'Saving new Key Person, please wait..',
-                                                    success: function(d, e) {
-                                                        var json = Ext.decode(e.response.responseText);
-                                                        form.reset();
-                                                        Ext.Msg.alert('Success', 'Data has been saved');
-                                                        Ext.getCmp('CO').close();
-                                                        storeCO.load();
-                                                    },
-                                                    failure: function(d, e) {
-                                                        //console.log(data);
-                                                        var json = Ext.decode(e.response.responseText);
-                                                        Ext.Msg.alert('Error', json.error_message);
-                                                    }
-                                                });
+                                            	Ext.MessageBox.confirm('Confirmation', 'Are you sure want to save this data ?', function(btn) {
+                                            		if(btn == 'yes') {
+		                                                form.submit({
+		                                                    url: sd.baseUrl + '/contacts/request/create/id/' + data.INVESTOR_ID,
+		                                                    waitMsg: 'Saving new Key Person, please wait..',
+		                                                    success: function(d, e) {
+		                                                        var json = Ext.decode(e.response.responseText);
+		                                                        form.reset();
+		                                                        Ext.Msg.alert('Success', 'Data has been saved.');
+		                                                        Ext.getCmp('CO').close();
+		                                                        storeCO.load();
+		                                                    },
+		                                                    failure: function(d, e) {
+		                                                        //console.log(data);
+		                                                        var json = Ext.decode(e.response.responseText);
+		                                                        Ext.Msg.alert('Error', '[' + json.error_code + '] : ' + json.error_message);
+		                                                    }
+		                                                });
+                                            		}
+                                            	});
+                                            } else {
+                                            	Ext.Msg.alert('Error', manr);
                                             }
                                         }
                                     }
@@ -812,30 +818,36 @@ if(!c.up().items.get(xid)) {
 	                                            var store = loadStore ('Contacts');
 	                                            
 	                                            if (form.isValid()) {
-	                                                form.submit({
-	                                                    url: sd.baseUrl + '/contacts/request/updating/',
-	                                                    params:{
-	                                                    	CONTACT_ID:__data.CONTACT_ID,
-	                                                    	INVESTOR_ID:data.INVESTOR_ID
-	                                                    },
-	                                                    waitMsg: 'Saving Update Key Person, please wait..',
-	                                                    success: function(d, e) {
-	                                                        var json = Ext.decode(e.response.responseText);
-	                                                        form.reset();
-	                                                        store.load({
-	                                                            params: {
-	                                                                id: data.INVESTOR_ID
-	                                                            }
-	                                                        });
-	                                                        Ext.Msg.alert('Success', 'Data has been saved');
-	                                                        Ext.getCmp('UCO').close();
-	                                                    },
-	                                                    failure: function(d, e) {
-	                                                        //console.log(data);
-	                                                        var json = Ext.decode(e.response.responseText);
-	                                                        Ext.Msg.alert('Error', json.error_message);
-	                                                    }
-	                                                });
+	                                            	Ext.MessageBox.confirm('Update Confirmation', 'Are you sure want to save this data ?', function(btn) {
+                                            			if(btn == 'yes') {
+                                            				form.submit({
+			                                                    url: sd.baseUrl + '/contacts/request/updating/',
+			                                                    params:{
+			                                                    	CONTACT_ID:__data.CONTACT_ID,
+			                                                    	INVESTOR_ID:data.INVESTOR_ID
+			                                                    },
+			                                                    waitMsg: 'Saving Key Person data, please wait..',
+			                                                    success: function(d, e) {
+			                                                        var json = Ext.decode(e.response.responseText);
+			                                                        form.reset();
+			                                                        store.load({
+			                                                            params: {
+			                                                                id: data.INVESTOR_ID
+			                                                            }
+			                                                        });
+			                                                        Ext.Msg.alert('Success', 'Data has been saved.');
+			                                                        Ext.getCmp('UCO').close();
+			                                                    },
+			                                                    failure: function(d, e) {
+			                                                        //console.log(data);
+			                                                        var json = Ext.decode(e.response.responseText);
+			                                                        Ext.Msg.alert('Error', '[' + json.error_code + '] : ' + json.error_message);
+			                                                    }
+			                                                });
+                                            			}
+                                            		});
+	                                            } else {
+	                                            	Ext.Msg.alert('Error', manr);
 	                                            }
 	                                        }
 	                                    }
@@ -864,57 +876,35 @@ if(!c.up().items.get(xid)) {
 						var __selected = __c.getSelectionModel().getSelection();
 						if(__selected.length > 0) {
 							var __data = __selected[0].data;
-							Ext.create('Ext.Window', {
-								html: 'Are you sure want do delete selected item(s) ?',
-								bodyPadding: '20 5 5 17',
-								title: 'Confirmation',
-								resizable: false,
-								modal: true,
-								closable: false,
-								draggable: false,
-								width: 300,
-								height: 120,
-								buttons: [{
-									text: 'Yes',
-									listeners: {
-										click: function() {
-											showLoadingWindow();
-											this.up().up().close();
-											Ext.Ajax.request({
-												url: sd.baseUrl + '/contacts/request/destroy',
+							Ext.MessageBox.confirm('Delete Confirmation', 'Are you sure want to delete selected contact(s) ?', function(btn) {
+								if(btn == 'yes') {
+									showLoadingWindow();
+									Ext.Ajax.request({
+										url: sd.baseUrl + '/contacts/request/destroy',
+										params: {
+											id: __data.CONTACT_ID,
+											INVESTOR_ID:data.INVESTOR_ID
+										},
+										success: function(d) {
+											var json = Ext.decode(d.responseText); // Decode responsetext | Json to Javasript Object
+											closeLoadingWindow();
+											storeCO.load({
 												params: {
-													id: __data.CONTACT_ID,
-													INVESTOR_ID:data.INVESTOR_ID
-												},
-												success: function(d) {
-													var json = Ext.decode(d.responseText); // Decode responsetext | Json to Javasript Object
-													closeLoadingWindow();
-													storeCO.load({
-														params: {
-															id: data.INVESTOR_ID
-														}
-													});
-													Ext.Msg.alert('Message', 'Data successfully deleted.');
-												},
-												failure: function(d) {
-													var json = Ext.decode(d.responseText); // Decode responsetext | Json to Javasript Object
-													closeLoadingWindow();
-													Ext.Msg.alert('Error', json.error_message);
+													id: data.INVESTOR_ID
 												}
 											});
+											Ext.Msg.alert('Message', 'Data successfully deleted.');
+										},
+										failure: function(d) {
+											var json = Ext.decode(d.responseText); // Decode responsetext | Json to Javasript Object
+											closeLoadingWindow();
+											Ext.Msg.alert('Error', '[' + json.error_code + '] : ' + json.error_message);
 										}
-									}
-								},{
-									text: 'No',
-									listeners: {
-										click: function() {
-											this.up().up().close();
-										}
-									}
-								}]
-							}).show();
+									});
+								}
+							});
 						} else {
-							Ext.Msg.alert('Error', 'You did not select any contact.');
+							Ext.Msg.alert('Error', 'You did not select any contact(s).');
 						}
 					}
 				}

@@ -40,7 +40,8 @@ if(!c.up().items.get(id)) {
 	
 	store.load({
 		params: {
-			id: data.SHAREHOLDING_ID
+			id: data.SHAREHOLDING_ID /* single param */
+		}
 	});
 	store.autoSync = true;
     Ext.create('Ext.Window', {
@@ -68,6 +69,8 @@ if(!c.up().items.get(id)) {
 							Ext.Msg.alert('Message','Success adding Amount');
 							var store = loadStore('Shareholdings');
 							store.loadPage(1);
+//							var store = Ext.StoreManager.lookup('Shareholdings');
+//							store.load(1);
 						},
 						failure: function(data) {
 							var json = Ext.decode(data.responseText);

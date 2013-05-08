@@ -23,7 +23,28 @@ class MyIndo_Ext_TreeStores extends MyIndo_Ext_Abstract
 		$menus = array();
 		$lists = array();
 		$i = 0;
+		/* Privileges */
+		foreach($groups as $_k=>$_d) {
+			$q = $privModel->select()
+			->where('GROUP_ID = ?', $_d)
+			->where('TYPE = ?', 'submenus');
+			$x = $q->query()->fetchAll();
+			foreach($x as $__k=>$__d) {
+				// $name = $subMenuModel->getValueByKey('SUB_MENU_ID', $__d['ID'], 'NAME');
+				// echo "ID : " . $__d['ID'] . "\n";
+				$q = $subMenuModel->select()
+				->where('SUB_MENU_ID = ?', $__d['ID']);
+				$_xdata = $q->query()->fetch();
+
+				$name = (isset($_xdata['NAME'])) ? $_xdata['NAME'] : 'xxx---000---xxx';
+				if(!in_array($name, $menus)) {
+					$menus[] = $name;
+				}
+			}
+		}
+		/* End of : Privileges */
 		foreach($data as $k=>$d) {
+			
 			
 			/* Privileges */
 			foreach($groups as $_k=>$_d) {
@@ -32,7 +53,13 @@ class MyIndo_Ext_TreeStores extends MyIndo_Ext_Abstract
 				->where('TYPE = ?', 'submenus');
 				$x = $q->query()->fetchAll();
 				foreach($x as $__k=>$__d) {
-					$name = $subMenuModel->getValueByKey('SUB_MENU_ID', $__d['ID'], 'NAME');
+					// $name = $subMenuModel->getValueByKey('SUB_MENU_ID', $__d['ID'], 'NAME');
+					// echo "ID : " . $__d['ID'] . "\n";
+					$q = $subMenuModel->select()
+					->where('SUB_MENU_ID = ?', $__d['ID']);
+					$_xdata = $q->query()->fetch();
+
+					$name = (isset($_xdata['NAME'])) ? $_xdata['NAME'] : 'xxx---000---xxx';
 					if(!in_array($name, $menus)) {
 						$menus[] = $name;
 					}

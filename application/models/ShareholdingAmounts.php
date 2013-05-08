@@ -124,13 +124,13 @@ class Application_Model_ShareholdingAmounts extends MyIndo_Ext_Abstract
 		return $select->query()->fetch();
 	}
 	
-   public function getTotal()
+   public function getTotal($id)
 	{
 
 		$select = $this->select();
 		$select->from('SHAREHOLDING_AMOUNTS',array());
 		$select->columns('SHAREHOLDING_ID');	
-		$select->where('SHAREHOLDING_ID');	
+		$select->where('SHAREHOLDING_ID = ?', $id);	
 		$select->group('SHAREHOLDING_ID');
 		$select->order('DATE DESC');
 		return $select->query()->fetchAll();

@@ -476,7 +476,7 @@ if(!c.up().items.get(xid)) {
 					minHeight: 160,
 					allowBlank: false,
 					msgTarget:'under',
-					maxLength:2000
+					maxLength:1000
 				}]
 			}]
 		},{
@@ -526,7 +526,7 @@ if(!c.up().items.get(xid)) {
 					minHeight: 160,
 					allowBlank: false,
 					msgTarget:'under',
-					maxLength:2000
+					maxLength:1000
 				}]
 			}]
 		},{

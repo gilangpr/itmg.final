@@ -75,9 +75,10 @@
 				<div id="head2">
 					<center><h4>Meeting Activities</h4></center>
 				</div>
+				<table>
 				<?php
 					
-					foreach ($this->ma as $meeting) {
+					/*foreach ($this->ma as $meeting) {
 						//$in=count($meeting['INITIAL_PART']);
 						//if($in>1){
 						echo "   ".$meeting['MEETING_DATE']."&nbsp &nbsp &nbsp <b>".$meeting['MEETING_EVENT']."</b> &nbsp &nbsp &nbsp".
@@ -90,9 +91,67 @@
 								
 							}
 							echo "<br>";
+							<table>
+							<tr>
+								<td class="date"><b>Date</b></td>
+								<td><b><center>Meeting Event</center></b></td>
+								<td>Name</td>
+								<td>Initial</td>
+							</tr>
+						//}
+					}*/
+					$temp = "";
+					$i=0;
+					foreach ($this->ma as $meeting=>$m) {
+						if($temp == ""){
+							$temp = $m["MEETING_ACTIVITIE_ID"];
+							/*$meeting_date[$i]["MEETING_DATE"] = "";
+							$meeting_event[$i]["MEETING_EVENT"] = "";*/
+							$name[$i]["NAME"] = "";
+							$initial[$i]["INITIAL_PART"] = "";
+						}
+						if ($temp != $m['MEETING_ACTIVITIE_ID']) {
+							$i++;
+							$temp = $m["MEETING_ACTIVITIE_ID"];
+							/*$meeting_date[$i]["MEETING_DATE"] = "";
+							$meeting_event[$i]["MEETING_EVENT"] = "";*/
+							$name[$i]["NAME"] = "";
+							$initial[$i]["INITIAL_PART"] = "";
+						}
+						if(!isset($meeting_id[$i]["MEETING_ACTIVITIE_ID"])) {
+							$originalDate = $m['MEETING_DATE'];
+							$newDate = date("d-m-Y", strtotime($originalDate));
+							$meeting_id[$i]['MEETING_ACTIVITIE_ID'] = $m['MEETING_ACTIVITIE_ID'];	
+							$meeting_date[$i]['MEETING_DATE'] = $newDate;
+							$meeting_event[$i]['MEETING_EVENT'] = $m['MEETING_EVENT'];
+							//$this->_data['data']['items'][$_i]['NOTES'] = $d['NOTES'];
+						}
+
+						echo "<tr><td class='date'><center>".$meeting_date[$i]['MEETING_DATE']."</center></td><td><b>".$meeting_event[$i]['MEETING_EVENT']."</b></td><td>";
+						foreach ($this->mc as $meetingc =>$c) {
+							if ($meeting_id[$i]['MEETING_ACTIVITIE_ID'] == $c['MEETING_ACTIVITIE_ID'] ){
+								
+									echo $c['NAME'].",";
+							}
+						}
+						foreach ($this->pa as $meetingp =>$p) {
+							if ($meeting_id[$i]['MEETING_ACTIVITIE_ID'] == $p['MEETING_ACTIVITIE_ID']){
+								
+									echo $p['NAME'].",";
+							}
+						}
+						echo "</td><td>";
+						foreach ($this->mp as $meeetingmp=>$mp) {
+							if ($meeting_id[$i]['MEETING_ACTIVITIE_ID'] == $mp['MEETING_ACTIVITIE_ID']){
+								echo $mp['INITIAL_PART'].".";	
+								}
+								
+							}
+							echo "</td></tr>";
+							//echo "<br>";
 						//}
 					}
-					
+					echo "</table>";
 				?>
 			</div>
 			<div id="detail3">
@@ -179,10 +238,19 @@
 										}
 									},
 									label: {
-										field: 'TITLE',
-										contrast: true,
-										display: 'none',
-										font: '12px Arial'
+										display: 'rotate',
+						                  'text-anchor': 'middle',
+						                field: 'TITLE',
+						                orientation: 'horizontal',
+						                fill: '#FFF',
+						                font: '12px Arial',
+						                renderer: function (label){
+								            // this will change the text displayed on the pie
+								            var cmp = Ext.getCmp('chartCmp'); // id of the chart
+								            var index = cmp.store.findExact('TITLE', label); // the field containing the current label
+								            var data = cmp.store.getAt(index).data;
+								            return data.VALUE + '%'; // the field containing the label to display on the chart
+						          		}
 									}
 								}]
 							}]

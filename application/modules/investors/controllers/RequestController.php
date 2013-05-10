@@ -330,6 +330,9 @@ class Investors_RequestController extends MyIndo_Controller_Action
 			//$details = $this->_model->getDetailByKey('INVESTOR_ID', $id);
 			$conModel = new Application_Model_Contacts();
 			$miModel = new Application_Model_Meetinginvestor();
+			$mcModel = new Application_Model_Meetingcontact();
+			$mpModel = new Application_Model_Meetingparticipant();
+			$participant  = new Application_Model_Participant();
 			$q = $this->_model->select()
 				->from('INVESTORS',array('*'))
 				->setIntegrityCheck(false)
@@ -349,15 +352,35 @@ class Investors_RequestController extends MyIndo_Controller_Action
 				->setIntegrityCheck(false)
 				//->join('INVESTORS','MEETING_ACTIVITIE_INVESTOR.INVESTOR_ID = INVESTORS.INVESTOR_ID',array('*'))
 				->join('MEETING_ACTIVITIE', 'MEETING_ACTIVITIE.MEETING_ACTIVITIE_ID = MEETING_ACTIVITIE_INVESTOR.MEETING_ACTIVITIE_ID',array('*'))
-				->join('MEETING_ACTIVITIE_CONTACT','MEETING_ACTIVITIE_CONTACT.MEETING_ACTIVITIE_ID = MEETING_ACTIVITIE.MEETING_ACTIVITIE_ID',array('*'))
+				/*->join('MEETING_ACTIVITIE_CONTACT','MEETING_ACTIVITIE_CONTACT.MEETING_ACTIVITIE_ID = MEETING_ACTIVITIE.MEETING_ACTIVITIE_ID',array('*'))
 				->join('CONTACTS','MEETING_ACTIVITIE_CONTACT.CONTACT_ID = CONTACTS.CONTACT_ID',array('*'))
 				->join('MEETING_ACTIVITIE_ITM','MEETING_ACTIVITIE_ITM.MEETING_ACTIVITIE_ID = MEETING_ACTIVITIE_INVESTOR.MEETING_ACTIVITIE_ID',array('*'))
-				->join('ITM_PARTICIPANTS','MEETING_ACTIVITIE_ITM.PARTICIPANT_ID = ITM_PARTICIPANTS.PARTICIPANT_ID',array('*'))
-				->where('MEETING_ACTIVITIE_INVESTOR.INVESTOR_ID= ?', $id)
-				->where('CONTACTS.INVESTOR_ID= ?',$id);
-			$ma = $a->query()->fetchAll();	
+				->join('ITM_PARTICIPANTS','MEETING_ACTIVITIE_ITM.PARTICIPANT_ID = ITM_PARTICIPANTS.PARTICIPANT_ID',array('*'))*/
+				->where('MEETING_ACTIVITIE_INVESTOR.INVESTOR_ID= ?', $id);
+				//->where('CONTACTS.INVESTOR_ID= ?',$id);
+			$ma = $a->query()->fetchAll();
 
+			$c = $mcModel->select()
+				->from('MEETING_ACTIVITIE_CONTACT',array('*'))
+				->setIntegrityCheck(false)
+				->join('CONTACTS','CONTACTS.CONTACT_ID = MEETING_ACTIVITIE_CONTACT.CONTACT_ID',array('NAME'))
+				->where('CONTACTS.INVESTOR_ID = ?', $id);
+			$mc = $c->query()->fetchAll();
 
+			$p =$participant->select()
+				->from('PARTICIPANTS',array('*'))
+ 				->setIntegrityCheck(false);
+ 			$pa = $p->query()->fetchAll();
+
+ 			$i = $mpModel->select()
+ 				->from('MEETING_ACTIVITIE_ITM',array('*'))
+ 				->setIntegrityCheck(false)
+ 				->join('ITM_PARTICIPANTS','MEETING_ACTIVITIE_ITM.PARTICIPANT_ID = ITM_PARTICIPANTS.PARTICIPANT_ID',array('INITIAL_PART'));
+ 			$mp	= $i->query()->fetchAll();
+
+ 			$this->view->mp = $mp;
+ 			$this->view->pa = $pa;
+ 			$this->view->mc = $mc;
 			$this->view->ma = $ma;
 			$this->view->con = $con;
 			$this->view->details = $details;

@@ -173,6 +173,7 @@ function loadContent(param1, editor) {
 													st += temp[j].substring(0,1) + temp[j].substring(1,temp[j].length).toLowerCase();
 												}
 												st += 's';
+												
 												records.raw.contents.columns[i].editor = new Ext.form.field.ComboBox({
 													displayField: e.dataIndex,
 												    width: 500,

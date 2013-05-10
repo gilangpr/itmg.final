@@ -6,6 +6,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
     {
         date_default_timezone_set('Asia/Jakarta');
     }
+    
     protected function _initConfig ()
     {
         $config = new Zend_Config($this->getOptions(), true);
